@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Upload a PDF resume and get a score, the skills it highlights, and the ones it's missing." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Compare a PDF resume against a job description and see supported skills that match or may be missing.">
   <title>Mahi's Resume Parser</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
+      else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        document.documentElement.setAttribute("data-theme", "light");
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    } catch (_) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  </script>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="#">
+      <a class="brand" href="#" aria-label="Mahi's Resume Parser home">
         <span class="brand-mark">M</span>
-        Mahi's Resume Parser
+        <span>Mahi's Resume Parser</span>
       </a>
-      <nav class="nav">
-        <a href="#upload">Upload</a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#upload">Analyze</a>
         <a href="#how">How it works</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme" title="Switch theme">
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
       </nav>
     </div>
   </header>
@@ -24,33 +41,33 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1>Find out what your resume says — and what it's missing.</h1>
-        <p>Upload a PDF resume and get a score out of 100, the skills it highlights, and the ones it's missing.</p>
+        <p class="eyebrow">RESUME MATCHING TOOL</p>
+        <h1>Find out what your resume says — and what the job needs.</h1>
+        <p>Extract text from a PDF, compare recognized skills against a job description, and review potential gaps.</p>
       </div>
     </section>
 
-    <section id="upload" class="container">
-      <h2 class="visually-hidden">Upload your resume</h2>
+    <section id="upload" class="container main-section">
       <div class="card upload-card">
-        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a PDF resume">
-          <div class="dropzone-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
+        <div class="job-description-field">
+          <label for="job-description">Job description</label>
+          <textarea id="job-description" placeholder="Paste the full job description here. For example: Swift, SwiftUI, REST APIs, unit testing, CI/CD..." rows="7"></textarea>
+          <p class="hint">The tool compares skills it recognizes in this description with skills found in your resume.</p>
+        </div>
+
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a PDF resume. You can also drag and drop a PDF here.">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
           <p><strong>Click to upload</strong> or drag and drop your resume here</p>
           <p class="hint">PDF only, up to 5 MB</p>
         </div>
-        <input type="file" id="file-input" accept=".pdf,application/pdf" hidden />
+        <input type="file" id="file-input" accept=".pdf,application/pdf" hidden>
 
-        <div id="error" class="error" hidden></div>
+        <div id="error" class="error" role="alert" hidden></div>
 
         <div id="file-row" class="file-row" hidden>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <div class="file-meta">
             <span id="file-name" class="file-name"></span>
             <span id="file-size" class="file-size"></span>
@@ -58,59 +75,83 @@
           <button id="remove-btn" class="link-btn" type="button">Remove</button>
         </div>
 
-        <div id="progress" class="progress" hidden>
-          <span class="spinner" aria-hidden="true"></span>Analyzing your resume…
+        <div id="extraction-status" class="extraction-status" role="status" aria-live="polite" hidden></div>
+
+        <div id="progress" class="progress" role="status" aria-live="polite" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Extracting and matching your resume…</span>
         </div>
+        <p class="privacy-note">Privacy: this demo processes the PDF in your browser. It does not upload your resume to an application server.</p>
       </div>
     </section>
 
     <section id="results" class="container results" hidden aria-live="polite">
+      <div class="card match-summary">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR REPORT</p>
+            <h2>Job match breakdown</h2>
+          </div>
+          <span id="skill-count-badge" class="count-badge">0 skills</span>
+        </div>
+        <p id="match-summary" class="match-summary-text">No analysis yet.</p>
+        <p id="match-details" class="hint"></p>
+        <div class="match-counts">
+          <div><span class="count-dot matched-dot"></span><strong id="matched-count">0</strong><span>matched</span></div>
+          <div><span class="count-dot missing-dot"></span><strong id="missing-count">0</strong><span>missing</span></div>
+        </div>
+      </div>
+
       <div class="card score-card">
-        <div class="score-label">Resume score</div>
+        <div class="score-label">Job Skill Match</div>
         <div class="score-value"><span id="score-value">0</span><small>/100</small></div>
         <p id="score-note" class="score-note"></p>
+        <div class="score-track" aria-hidden="true"><div id="score-bar" class="score-bar"></div></div>
+        <p class="score-disclaimer">This is a supported-skill overlap estimate, not an official ATS score or a hiring prediction.</p>
       </div>
 
       <div class="grid-2">
         <div class="card skill-card">
-          <h2>Skills present</h2>
+          <div class="skill-heading"><h2>Skills matched</h2><span id="present-count" class="mini-count">0</span></div>
+          <p class="hint">Recognized in both the job description and your resume.</p>
           <ul id="present-skills" class="chips"></ul>
         </div>
         <div class="card skill-card">
-          <h2>Skills missing</h2>
+          <div class="skill-heading"><h2>Skills not detected</h2><span id="missing-skill-count" class="mini-count warning-count">0</span></div>
+          <p class="hint">Recognized in the job description but not detected in your resume text.</p>
           <ul id="missing-skills" class="chips"></ul>
         </div>
       </div>
 
-      <button id="reset-btn" class="btn-secondary" type="button">Analyze another resume</button>
+      <div class="card skill-card resume-skills-card">
+        <h2>Other skills detected in your resume</h2>
+        <p class="hint">These supported skills were found in the resume but not recognized in the job description.</p>
+        <ul id="other-skills" class="chips"></ul>
+      </div>
+
+      <div class="results-actions">
+        <button id="reset-btn" class="btn-secondary" type="button">Analyze another resume</button>
+      </div>
     </section>
 
     <section id="how" class="container how">
-      <h2>How it works</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h3>Upload your resume</h3>
-          <p>Drop in a PDF up to 5 MB. Nothing leaves your browser in this demo.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h3>We parse the skills</h3>
-          <p>The parser scans your resume and extracts the skills it finds.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3>Get your report</h3>
-          <p>A score out of 100, plus the skills present and the ones missing.</p>
-        </div>
+      <div class="section-intro">
+        <p class="eyebrow">SIMPLE AND TRANSPARENT</p>
+        <h2>How it works</h2>
       </div>
+      <div class="steps">
+        <article class="step card"><div class="step-num">1</div><h3>Add a job description</h3><p>Paste the requirements for the role you want to compare against.</p></article>
+        <article class="step card"><div class="step-num">2</div><h3>Upload your PDF</h3><p>PDF.js extracts selectable text in your browser. Scanned image-only PDFs may need OCR.</p></article>
+        <article class="step card"><div class="step-num">3</div><h3>Review your report</h3><p>See recognized matched skills, skills not detected, and a transparent overlap percentage.</p></article>
+      </div>
+      <p class="dictionary-note">Limitations: results depend on the built-in skill dictionary and the text extractable from the PDF. Similar concepts and non-technical requirements may not be recognized.</p>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">Mahi's Resume Parser — demo UI. Parsing is simulated in the browser; no backend involved.</div>
+    <div class="container">Mahi's Resume Parser · Browser-side demo · No backend required</div>
   </footer>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

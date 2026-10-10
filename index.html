@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Upload a PDF resume and get a score, the skills it highlights, and the ones it's missing." />
+  <title>Mahi's Resume Parser</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#">
+        <span class="brand-mark">M</span>
+        Mahi's Resume Parser
+      </a>
+      <nav class="nav">
+        <a href="#upload">Upload</a>
+        <a href="#how">How it works</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Find out what your resume says — and what it's missing.</h1>
+        <p>Upload a PDF resume and get a score out of 100, the skills it highlights, and the ones it's missing.</p>
+      </div>
+    </section>
+
+    <section id="upload" class="container">
+      <h2 class="visually-hidden">Upload your resume</h2>
+      <div class="card upload-card">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a PDF resume">
+          <div class="dropzone-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </div>
+          <p><strong>Click to upload</strong> or drag and drop your resume here</p>
+          <p class="hint">PDF only, up to 5 MB</p>
+        </div>
+        <input type="file" id="file-input" accept=".pdf,application/pdf" hidden />
+
+        <div id="error" class="error" hidden></div>
+
+        <div id="file-row" class="file-row" hidden>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <div class="file-meta">
+            <span id="file-name" class="file-name"></span>
+            <span id="file-size" class="file-size"></span>
+          </div>
+          <button id="remove-btn" class="link-btn" type="button">Remove</button>
+        </div>
+
+        <div id="progress" class="progress" hidden>
+          <span class="spinner" aria-hidden="true"></span>Analyzing your resume…
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="container results" hidden aria-live="polite">
+      <div class="card score-card">
+        <div class="score-label">Resume score</div>
+        <div class="score-value"><span id="score-value">0</span><small>/100</small></div>
+        <p id="score-note" class="score-note"></p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card skill-card">
+          <h2>Skills present</h2>
+          <ul id="present-skills" class="chips"></ul>
+        </div>
+        <div class="card skill-card">
+          <h2>Skills missing</h2>
+          <ul id="missing-skills" class="chips"></ul>
+        </div>
+      </div>
+
+      <button id="reset-btn" class="btn-secondary" type="button">Analyze another resume</button>
+    </section>
+
+    <section id="how" class="container how">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Upload your resume</h3>
+          <p>Drop in a PDF up to 5 MB. Nothing leaves your browser in this demo.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>We parse the skills</h3>
+          <p>The parser scans your resume and extracts the skills it finds.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Get your report</h3>
+          <p>A score out of 100, plus the skills present and the ones missing.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Mahi's Resume Parser — demo UI. Parsing is simulated in the browser; no backend involved.</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
